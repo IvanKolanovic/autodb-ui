@@ -68,11 +68,6 @@
 					>
 						Complaints: {vehicle.complaintsCount}
 					</span>
-					<span
-						class="inline-flex items-center rounded bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-800"
-					>
-						Investigations: {vehicle.investigationsCount}
-					</span>
 				</div>
 			</div>
 		</div>

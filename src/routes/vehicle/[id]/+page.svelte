@@ -15,7 +15,6 @@
 		{ id: 'overview', label: 'Overview' },
 		{ id: 'recalls', label: 'Recalls' },
 		{ id: 'complaints', label: 'Complaints' },
-		{ id: 'investigations', label: 'Investigations' },
 		{ id: 'safety', label: 'Safety Ratings' }
 	];
 
@@ -176,10 +175,6 @@
 							{:else if tab.id === 'complaints' && vehicle.complaintsCount > 0}
 								<span class="ml-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-800"
 									>{vehicle.complaintsCount}</span
-								>
-							{:else if tab.id === 'investigations' && vehicle.investigationsCount > 0}
-								<span class="ml-1 rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-800"
-									>{vehicle.investigationsCount}</span
 								>
 							{/if}
 						</button>
