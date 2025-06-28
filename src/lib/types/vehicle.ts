@@ -248,3 +248,4 @@ export const DetailedVehicleResponseSchema = z.object({
 });
 
 export type DetailedVehicleResponse = z.infer<typeof DetailedVehicleResponseSchema>;
+ 

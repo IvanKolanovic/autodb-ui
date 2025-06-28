@@ -29,6 +29,11 @@ export interface MostRecalledVehicle {
 	issueDescription: string;
 }
 
+export interface RecallsByYear {
+	year: number;
+	count: number;
+}
+
 export interface PaginationMeta {
 	count: number;
 	max: number;
@@ -54,6 +59,7 @@ export interface DashboardAnalytics {
 	recentRecalls: RecentRecall[];
 	recallsByManufacturer?: RecallsByManufacturer[];
 	mostRecalledVehicles?: MostRecalledVehicle[];
+	recallsByYear?: RecallsByYear[];
 }
 
 export interface DashboardAnalyticsResponse {

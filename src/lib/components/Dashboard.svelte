@@ -1,13 +1,27 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, afterUpdate } from 'svelte';
 	import {
 		getDashboardAnalytics,
 		type RecentRecall,
 		type RecallsByManufacturer,
-		type MostRecalledVehicle
+		type MostRecalledVehicle,
+		type RecallsByYear
 	} from '$lib/api/dashboard-api';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { Card, CardContent, CardHeader, CardTitle } from '$lib/components/ui/card';
+	import {
+		Chart,
+		BarController,
+		CategoryScale,
+		LinearScale,
+		BarElement,
+		Title,
+		Tooltip,
+		Legend
+	} from 'chart.js';
+
+	// Register Chart.js components
+	Chart.register(BarController, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 	// Mock data for dashboard stats
 	const stats = [
@@ -21,13 +35,94 @@
 	let recentRecalls: RecentRecall[] = [];
 	let recallsByManufacturer: RecallsByManufacturer[] = [];
 	let mostRecalledVehicles: MostRecalledVehicle[] = [];
+	let recallsByYear: RecallsByYear[] = [];
 	let isLoading = true;
 	let error: string | null = null;
+
+	// Chart reference
+	let chartCanvas: HTMLCanvasElement;
+	let chart: Chart | null = null;
 
 	// Calculate the maximum recall count for the bar chart
 	$: maxRecallCount = recallsByManufacturer.length
 		? Math.max(...recallsByManufacturer.map((item) => item.recallCount))
 		: 0;
+
+	// Update chart when data changes
+	$: if (chartCanvas && recallsByYear.length > 0 && !isLoading) {
+		updateChart();
+	}
+
+	// Function to create or update the chart
+	function updateChart() {
+		if (chart) {
+			chart.destroy();
+		}
+
+		const ctx = chartCanvas.getContext('2d');
+		if (!ctx) return;
+
+		chart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: recallsByYear.map((item) => item.year.toString()),
+				datasets: [
+					{
+						label: 'Number of Recalls',
+						data: recallsByYear.map((item) => item.count),
+						backgroundColor: 'rgba(59, 130, 246, 0.8)', // blue-500 with opacity
+						borderColor: 'rgb(37, 99, 235)', // blue-600
+						borderWidth: 1
+					}
+				]
+			},
+			options: {
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					title: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							title: (tooltipItems: any[]) => {
+								return `Year: ${tooltipItems[0].label}`;
+							},
+							label: (tooltipItem: any) => {
+								return `Recalls: ${tooltipItem.raw}`;
+							}
+						}
+					}
+				},
+				scales: {
+					y: {
+						beginAtZero: true,
+						grid: {
+							color: 'rgba(156, 163, 175, 0.2)' // gray-400 with opacity
+						},
+						ticks: {
+							font: {
+								size: 12
+							}
+						}
+					},
+					x: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							font: {
+								size: 12
+							}
+						}
+					}
+				}
+			}
+		});
+	}
 
 	// Fetch dashboard data on component mount
 	onMount(async () => {
@@ -37,6 +132,7 @@
 				recentRecalls = response.data.recentRecalls;
 				recallsByManufacturer = response.data.recallsByManufacturer || [];
 				mostRecalledVehicles = response.data.mostRecalledVehicles || [];
+				recallsByYear = response.data.recallsByYear || [];
 			} else {
 				error = response.error || 'Failed to fetch dashboard data';
 			}
@@ -45,6 +141,15 @@
 		} finally {
 			isLoading = false;
 		}
+	});
+
+	// Clean up chart when component is destroyed
+	onMount(() => {
+		return () => {
+			if (chart) {
+				chart.destroy();
+			}
+		};
 	});
 </script>
 
@@ -66,6 +171,34 @@
 			</div>
 		</div>
 	{/each}
+</div>
+
+<!-- Recalls by Year Chart using Chart.js -->
+<div class="mb-8">
+	<Card>
+		<CardHeader>
+			<CardTitle>Total Number of Recalls by Year</CardTitle>
+		</CardHeader>
+		<CardContent>
+			{#if isLoading}
+				<div class="h-[300px]">
+					<Skeleton class="h-full w-full" />
+				</div>
+			{:else if error}
+				<div class="p-4 text-center text-red-500">
+					<p>Error loading data: {error}</p>
+				</div>
+			{:else if recallsByYear.length === 0}
+				<div class="p-4 text-center text-gray-500">
+					<p>No yearly recall data found</p>
+				</div>
+			{:else}
+				<div class="h-[300px] w-full">
+					<canvas bind:this={chartCanvas}></canvas>
+				</div>
+			{/if}
+		</CardContent>
+	</Card>
 </div>
 
 <div class="mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
