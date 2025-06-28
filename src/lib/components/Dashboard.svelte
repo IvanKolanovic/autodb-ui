@@ -39,30 +39,37 @@
 	let isLoading = true;
 	let error: string | null = null;
 
-	// Chart reference
-	let chartCanvas: HTMLCanvasElement;
-	let chart: Chart | null = null;
+	// Chart references
+	let yearChartCanvas: HTMLCanvasElement;
+	let manufacturerChartCanvas: HTMLCanvasElement;
+	let yearChart: Chart | null = null;
+	let manufacturerChart: Chart | null = null;
 
 	// Calculate the maximum recall count for the bar chart
 	$: maxRecallCount = recallsByManufacturer.length
 		? Math.max(...recallsByManufacturer.map((item) => item.recallCount))
 		: 0;
 
-	// Update chart when data changes
-	$: if (chartCanvas && recallsByYear.length > 0 && !isLoading) {
-		updateChart();
+	// Update year chart when data changes
+	$: if (yearChartCanvas && recallsByYear.length > 0 && !isLoading) {
+		updateYearChart();
 	}
 
-	// Function to create or update the chart
-	function updateChart() {
-		if (chart) {
-			chart.destroy();
+	// Update manufacturer chart when data changes
+	$: if (manufacturerChartCanvas && recallsByManufacturer.length > 0 && !isLoading) {
+		updateManufacturerChart();
+	}
+
+	// Function to create or update the year chart
+	function updateYearChart() {
+		if (yearChart) {
+			yearChart.destroy();
 		}
 
-		const ctx = chartCanvas.getContext('2d');
+		const ctx = yearChartCanvas.getContext('2d');
 		if (!ctx) return;
 
-		chart = new Chart(ctx, {
+		yearChart = new Chart(ctx, {
 			type: 'bar',
 			data: {
 				labels: recallsByYear.map((item) => item.year.toString()),
@@ -124,6 +131,75 @@
 		});
 	}
 
+	// Function to create or update the manufacturer chart
+	function updateManufacturerChart() {
+		if (manufacturerChart) {
+			manufacturerChart.destroy();
+		}
+
+		const ctx = manufacturerChartCanvas.getContext('2d');
+		if (!ctx) return;
+
+		manufacturerChart = new Chart(ctx, {
+			type: 'bar',
+			data: {
+				labels: recallsByManufacturer.map((item) => item.manufacturer),
+				datasets: [
+					{
+						label: 'Number of Recalls',
+						data: recallsByManufacturer.map((item) => item.recallCount),
+						backgroundColor: 'rgba(59, 130, 246, 0.8)', // blue-500 with opacity
+						borderColor: 'rgb(37, 99, 235)', // blue-600
+						borderWidth: 1
+					}
+				]
+			},
+			options: {
+				indexAxis: 'y', // Horizontal bar chart
+				responsive: true,
+				maintainAspectRatio: false,
+				plugins: {
+					legend: {
+						display: false
+					},
+					title: {
+						display: false
+					},
+					tooltip: {
+						callbacks: {
+							label: (tooltipItem: any) => {
+								return `Recalls: ${tooltipItem.raw}`;
+							}
+						}
+					}
+				},
+				scales: {
+					y: {
+						grid: {
+							display: false
+						},
+						ticks: {
+							font: {
+								size: 12
+							}
+						}
+					},
+					x: {
+						beginAtZero: true,
+						grid: {
+							color: 'rgba(156, 163, 175, 0.2)' // gray-400 with opacity
+						},
+						ticks: {
+							font: {
+								size: 12
+							}
+						}
+					}
+				}
+			}
+		});
+	}
+
 	// Fetch dashboard data on component mount
 	onMount(async () => {
 		try {
@@ -143,11 +219,14 @@
 		}
 	});
 
-	// Clean up chart when component is destroyed
+	// Clean up charts when component is destroyed
 	onMount(() => {
 		return () => {
-			if (chart) {
-				chart.destroy();
+			if (yearChart) {
+				yearChart.destroy();
+			}
+			if (manufacturerChart) {
+				manufacturerChart.destroy();
 			}
 		};
 	});
@@ -181,7 +260,7 @@
 		</CardHeader>
 		<CardContent>
 			{#if isLoading}
-				<div class="h-[300px]">
+				<div class="h-[400px]">
 					<Skeleton class="h-full w-full" />
 				</div>
 			{:else if error}
@@ -193,8 +272,8 @@
 					<p>No yearly recall data found</p>
 				</div>
 			{:else}
-				<div class="h-[300px] w-full">
-					<canvas bind:this={chartCanvas}></canvas>
+				<div class="h-[400px] w-full">
+					<canvas bind:this={yearChartCanvas}></canvas>
 				</div>
 			{/if}
 		</CardContent>
@@ -209,10 +288,8 @@
 		</CardHeader>
 		<CardContent>
 			{#if isLoading}
-				<div class="space-y-2">
-					{#each Array(5) as _}
-						<Skeleton class="h-10 w-full" />
-					{/each}
+				<div class="h-[400px]">
+					<Skeleton class="h-full w-full" />
 				</div>
 			{:else if error}
 				<div class="p-4 text-center text-red-500">
@@ -223,21 +300,8 @@
 					<p>No manufacturer data found</p>
 				</div>
 			{:else}
-				<div class="space-y-4">
-					{#each recallsByManufacturer as item}
-						<div class="space-y-1">
-							<div class="flex items-center justify-between">
-								<span class="text-sm font-medium">{item.manufacturer}</span>
-								<span class="text-sm font-medium">{item.recallCount}</span>
-							</div>
-							<div class="h-2 w-full overflow-hidden rounded-full bg-gray-200">
-								<div
-									class="h-full rounded-full bg-blue-600"
-									style="width: {(item.recallCount / maxRecallCount) * 100}%"
-								></div>
-							</div>
-						</div>
-					{/each}
+				<div class="h-[400px] w-full">
+					<canvas bind:this={manufacturerChartCanvas}></canvas>
 				</div>
 			{/if}
 		</CardContent>
