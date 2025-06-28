@@ -34,6 +34,21 @@ export interface RecallsByYear {
 	count: number;
 }
 
+export interface CrashTestPerformance {
+	manufacturer: string;
+	totalTests: number;
+	passedTests: number;
+	failedTests: number;
+	passRate: number;
+}
+
+export interface RolloverResistanceData {
+	manufacturer: string;
+	model: string;
+	weight: number;
+	rolloverResistance: number;
+}
+
 export interface PaginationMeta {
 	count: number;
 	max: number;
@@ -60,6 +75,8 @@ export interface DashboardAnalytics {
 	recallsByManufacturer?: RecallsByManufacturer[];
 	mostRecalledVehicles?: MostRecalledVehicle[];
 	recallsByYear?: RecallsByYear[];
+	crashTestPerformance?: CrashTestPerformance[];
+	rolloverResistanceData?: RolloverResistanceData[];
 }
 
 export interface DashboardAnalyticsResponse {
