@@ -40,7 +40,7 @@
 	<footer class="sticky bottom-0 z-10 mt-auto w-full border-t border-gray-200 bg-white shadow-md">
 		<div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
 			<div class="flex justify-between">
-				<p class="text-sm text-gray-500">© 2023 AutoDB. All rights reserved.</p>
+				<p class="text-sm text-gray-500">© 2025 AutoDB. All rights reserved.</p>
 				<div class="flex space-x-6">
 				
 				</div>

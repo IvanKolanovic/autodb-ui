@@ -3,55 +3,11 @@
 		Card,
 		CardContent,
 		CardDescription,
-		CardFooter,
 		CardHeader,
 		CardTitle
 	} from '$lib/components/ui/card';
 	import { Tabs, TabsContent, TabsList, TabsTrigger } from '$lib/components/ui/tabs';
 
-	// Team members
-	const team = [
-		{
-			name: 'Alex Johnson',
-			role: 'Founder & CEO',
-			bio: 'Automotive industry veteran with 15+ years of experience in vehicle safety research.',
-			avatar: 'https://i.pravatar.cc/150?img=1'
-		},
-		{
-			name: 'Samantha Chen',
-			role: 'Lead Data Scientist',
-			bio: 'PhD in Data Analytics with expertise in automotive safety statistics and trend analysis.',
-			avatar: 'https://i.pravatar.cc/150?img=5'
-		},
-		{
-			name: 'Marcus Williams',
-			role: 'Head of Engineering',
-			bio: 'Former NHTSA engineer with extensive experience in vehicle safety standards.',
-			avatar: 'https://i.pravatar.cc/150?img=3'
-		}
-	];
-
-	// Testimonials
-	const testimonials = [
-		{
-			quote:
-				'AutoDB has been invaluable in helping me research vehicle safety before purchasing a car for my family.',
-			author: 'Jamie T., Parent',
-			rating: 5
-		},
-		{
-			quote:
-				'As a car dealer, I use AutoDB daily to stay informed about recalls and safety issues for the vehicles I sell.',
-			author: 'Robert M., Car Dealership Owner',
-			rating: 5
-		},
-		{
-			quote:
-				'The comprehensive data available through AutoDB has greatly improved my decision-making process when buying used cars.',
-			author: 'Elena K., Consumer',
-			rating: 4
-		}
-	];
 </script>
 
 <svelte:head>
@@ -71,11 +27,9 @@
 	</div>
 
 	<Tabs value="mission" class="mx-auto w-full max-w-4xl">
-		<TabsList class="mb-8 grid w-full grid-cols-4">
+		<TabsList class="mb-8 grid w-full grid-cols-2">
 			<TabsTrigger value="mission">Our Mission</TabsTrigger>
 			<TabsTrigger value="features">Features</TabsTrigger>
-			<TabsTrigger value="team">Our Team</TabsTrigger>
-			<TabsTrigger value="testimonials">Testimonials</TabsTrigger>
 		</TabsList>
 
 		<TabsContent value="mission">
@@ -92,7 +46,7 @@
 						</p>
 
 						<p class="my-4">
-							Founded in 2023, AutoDB was created with a simple but powerful mission: to democratize
+							Founded in 2025, AutoDB was created with a simple but powerful mission: to democratize
 							access to vehicle safety and performance data. We understand that navigating the
 							complex world of automotive safety can be challenging, which is why we've built a
 							platform that aggregates critical information from trusted sources and presents it in
@@ -246,60 +200,6 @@
 								Read and submit vehicle complaints to help identify emerging safety issues.
 							</p>
 						</div>
-					</div>
-				</CardContent>
-			</Card>
-		</TabsContent>
-
-		<TabsContent value="team">
-			<Card>
-				<CardHeader>
-					<CardTitle>Our Team</CardTitle>
-					<CardDescription>Meet the experts behind AutoDB</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-						{#each team as member}
-							<div class="flex flex-col items-center rounded-lg border p-4 text-center">
-								<img src={member.avatar} alt={member.name} class="mb-4 h-24 w-24 rounded-full" />
-								<h3 class="text-lg font-semibold">{member.name}</h3>
-								<p class="mb-2 text-sm text-blue-600">{member.role}</p>
-								<p class="text-sm text-gray-600">{member.bio}</p>
-							</div>
-						{/each}
-					</div>
-				</CardContent>
-			</Card>
-		</TabsContent>
-
-		<TabsContent value="testimonials">
-			<Card>
-				<CardHeader>
-					<CardTitle>What Our Users Say</CardTitle>
-					<CardDescription>Testimonials from people who use AutoDB</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-						{#each testimonials as testimonial}
-							<div class="rounded-lg bg-gray-50 p-6">
-								<div class="mb-3 flex">
-									{#each Array(5) as _, i}
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											class="h-5 w-5 {i < testimonial.rating ? 'text-yellow-400' : 'text-gray-300'}"
-											viewBox="0 0 20 20"
-											fill="currentColor"
-										>
-											<path
-												d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-											/>
-										</svg>
-									{/each}
-								</div>
-								<p class="mb-4 text-gray-700 italic">"{testimonial.quote}"</p>
-								<p class="text-sm font-medium text-gray-900">{testimonial.author}</p>
-							</div>
-						{/each}
 					</div>
 				</CardContent>
 			</Card>
